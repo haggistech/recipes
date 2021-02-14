@@ -12,9 +12,10 @@ export default () => {
     shortdescription: '',
     fulldescription: '',
     mainingred: '',
-    totaltime: '',
+    preptime: '',
     ingredients: '',
-    mealtype: ''
+    mealtype: '',
+    method: ''
   })
 
   const handleResponse = (status, msg) => {
@@ -29,9 +30,10 @@ export default () => {
         shortdescription: '',
         fulldescription: '',
         mainingred: '',
-        totaltime: '',
+        preptime: '',
         ingredients: '',
-        mealtype: ''
+        mealtype: '',
+        method: ''
       })
     } else {
       setStatus({
@@ -56,7 +58,7 @@ export default () => {
   const handleOnSubmit = async e => {
     e.preventDefault()
     setStatus(prevStatus => ({ ...prevStatus, submitting: true }))
-    const res = await fetch('/api/send', {
+    const res = await fetch('/api/sendToDatabase', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
@@ -69,6 +71,7 @@ export default () => {
 
   return (
     <main>
+      <center><h2>Submit a Recipe</h2></center><br />
       <form onSubmit={handleOnSubmit}>
       <label htmlFor="title">Recipe Name</label>
 <input
@@ -78,35 +81,41 @@ export default () => {
     required
 />
 
-<label htmlFor="shortdescription">Short Description</label>
+<label htmlFor="description">Short Description</label>
 <textarea
-    id="shortdescription"
-    onChange={handleOnChange}
-    required
-/>
-
-<label htmlFor="fulldescription">Full Description</label>
-<textarea
-    id="fulldescription"
+    id="description"
     onChange={handleOnChange}
     required
 />
 
 <label htmlFor="mainingred">Main Ingredient</label>
-<select 
-    name="mainingred" 
-    id="mainingred"
-    onChange={handleOnChange}
-    required>
-<option value="Chicken">Chicken</option>
-<option value="Beef">Beef</option>
-<option value="Pork">Pork</option>
-</select>
-
-<label htmlFor="totaltime">Total Time (hrs)</label>
 <input
-    id="totaltime"
-    type="totaltime"
+    id="mainingred"
+    type="mainingred"
+    onChange={handleOnChange}
+    required
+/>
+
+<label htmlFor="preptime">Prep Time</label>
+<input
+    id="preptime"
+    type="preptime"
+    onChange={handleOnChange}
+    required
+/>
+
+<label htmlFor="cooktime">Cook Time</label>
+<input
+    id="cooktime"
+    type="cooktime"
+    onChange={handleOnChange}
+    required
+/>
+
+<label htmlFor="difficulty">Difficulty</label>
+<input
+    id="difficulty"
+    type="difficulty"
     onChange={handleOnChange}
     required
 />
@@ -118,16 +127,20 @@ export default () => {
     required
 />
 
-<label htmlFor="mealtype">Meal Type</label>
-<select 
-    name="mealtype" 
-    id="mealtype"
+<label htmlFor="method">Method</label>
+<textarea
+    id="method"
     onChange={handleOnChange}
-    required>
-<option value="Breakfast">Breakfast</option>
-<option value="Lunch">Lunch</option>
-<option value="Dinner">Dinner</option>
-</select>
+    required
+/>
+
+<label htmlFor="mealtype">Meal Type</label>
+<input
+    id="mealtype"
+    type="mealtype"
+    onChange={handleOnChange}
+    required
+/>
         <button type="submit" disabled={status.submitting}>
           {!status.submitting
             ? !status.submitted

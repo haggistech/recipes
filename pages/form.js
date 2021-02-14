@@ -1,6 +1,19 @@
 import React, { useState } from 'react'
+import { useS3Upload } from 'next-s3-upload';
+import aws from 'aws-sdk';
+
 
 export default () => {
+
+  aws.config.update({
+    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+    region: process.env.REGION,
+    signatureVersion: 'v4',
+  });
+
+  const s3Bucket = new aws.S3({ params: { Bucket: process.env.BUCKET } });
+
   const [status, setStatus] = useState({
     submitted: false,
     submitting: false,
@@ -55,13 +68,14 @@ export default () => {
     })
   }
 
-  const handleOnSubmit = async e => {
+  const handleOnSubmit = async (e, path, buffer) => {
     e.preventDefault()
     setStatus(prevStatus => ({ ...prevStatus, submitting: true }))
     const res = await fetch('/api/sendToDatabase', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(inputs)
     })
@@ -80,6 +94,14 @@ export default () => {
     onChange={handleOnChange}
     required
 />
+
+<label htmlFor="file">Recipe Picture</label>
+<input
+        onChange={handleOnChange}
+        id="file"
+        type="file"
+        accept="image/png, image/jpeg"
+      />
 
 <label htmlFor="description">Short Description</label>
 <textarea
@@ -155,6 +177,7 @@ export default () => {
       {!status.info.error && status.info.msg && (
         <div className="success">{status.info.msg}</div>
       )}
+      
     </main>
   )
 }

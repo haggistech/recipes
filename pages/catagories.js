@@ -8,7 +8,7 @@ export default function Top({ recipes }) {
       <ul>
         {recipes.map((recipes) => (
           <li>
-            <Link href={{ pathname: 'listrecipes', query: recipes.mainingred}}><a><h3>{recipes.mainingred}</h3></a></Link>{recipes.shortdescription}
+            <Link href={{ pathname: 'listrecipes', query: { main: recipes.mainingred}}}><a><h3>{recipes.mainingred}</h3></a></Link>{recipes.shortdescription}
           </li>
         ))}
       </ul>

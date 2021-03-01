@@ -11,7 +11,7 @@ export default function Top({ recipes }) {
 <tbody>
 
     <tr>
-        <td rowspan="7"><img class="recipe" src={`https://s3.eu-west-1.amazonaws.com/mikmclean.co.uk/recipes/${recipes._id}/main.png`} /></td>
+        <td rowspan="7"><img class="recipe" src={`https://s3.eu-west-1.amazonaws.com/mikmclean.co.uk/recipes/${recipes._id}/main.png`}  onerror="if (this.src != 'https://s3.eu-west-1.amazonaws.com/mikmclean.co.uk/recipes/default.jpg') this.src = 'https://s3.eu-west-1.amazonaws.com/mikmclean.co.uk/recipes/default.jpg';"/></td>
         <td colspan="6"><h2>{recipes.title}</h2></td>
     </tr>
     <tr>

@@ -1,22 +1,16 @@
 import { connectToDatabase } from "../../util/mongodb";
-import aws from 'aws-sdk';
+import { useS3Upload } from 'next-s3-upload';
+const fs = require('fs');
 
 export default async function(req, res) {
 
-  var fs = require('fs');
 
-// function to encode file data to base64 encoded string
-function base64_encode(file) {
-    // read binary data
-    var bitmap = fs.readFileSync(file);
-    // convert binary data to base64 encoded string
-    return new Buffer(bitmap).toString('base64');
-}
-  
-  const { description, mainingred, difficulty, preptime, cooktime, ingredients, title, lastupdated, id, mealtype, method } = req.body
+
+  const { FileInput, file, description, mainingred, difficulty, preptime, cooktime, ingredients, title, lastupdated, id, mealtype, method } = req.body
   console.log('PROCESSING', req.body)
   const content = {
     Title: title,
+    FileInput: FileInput,
     Description: description,
     MainIngred: mainingred,
     Difficulty: difficulty,
@@ -42,7 +36,15 @@ function base64_encode(file) {
   );
 
 
+
+
+
+  
+
+  
   try {
+
+     
     console.log('SUCCESS', content)
     res.status(200).send('Recipe Saved Successfully.')
 

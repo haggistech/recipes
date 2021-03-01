@@ -1,19 +1,17 @@
-import React, { useState } from 'react'
+import React, { useState } from 'react';
 import { useS3Upload } from 'next-s3-upload';
-import aws from 'aws-sdk';
-
 
 export default () => {
 
-  aws.config.update({
-    accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    region: process.env.REGION,
-    signatureVersion: 'v4',
-  });
 
-  const s3Bucket = new aws.S3({ params: { Bucket: process.env.BUCKET } });
+  let [imageUrl, setImageUrl] = useState();
+  let { FileInput, openFileDialog, uploadToS3 } = useS3Upload();
 
+  let handleFileChange = async file => {
+    let { url } = await uploadToS3(file);
+    setImageUrl(url);
+  };
+  
   const [status, setStatus] = useState({
     submitted: false,
     submitting: false,
@@ -22,6 +20,7 @@ export default () => {
 
   const [inputs, setInputs] = useState({
     title: '',
+    FileInput: '',
     shortdescription: '',
     fulldescription: '',
     mainingred: '',
@@ -40,6 +39,7 @@ export default () => {
       })
       setInputs({
         title: '',
+        FileInput: '',
         shortdescription: '',
         fulldescription: '',
         mainingred: '',
@@ -68,7 +68,8 @@ export default () => {
     })
   }
 
-  const handleOnSubmit = async (e, path, buffer) => {
+  const handleOnSubmit = async (e) => {
+    console.log(JSON.stringify(inputs))
     e.preventDefault()
     setStatus(prevStatus => ({ ...prevStatus, submitting: true }))
     const res = await fetch('/api/sendToDatabase', {
@@ -78,7 +79,7 @@ export default () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify(inputs)
-    })
+    });
     const text = await res.text()
     handleResponse(res.status, text)
   }
@@ -86,7 +87,7 @@ export default () => {
   return (
     <main>
       <center><h2>Submit a Recipe</h2></center><br />
-      <form onSubmit={handleOnSubmit}>
+      <form onSubmit={handleOnSubmit} encType="multipart/form-data">
       <label htmlFor="title">Recipe Name</label>
 <input
     id="title"
@@ -95,13 +96,11 @@ export default () => {
     required
 />
 
-<label htmlFor="file">Recipe Picture</label>
-<input
-        onChange={handleOnChange}
-        id="file"
-        type="file"
-        accept="image/png, image/jpeg"
-      />
+<FileInput onChange={handleFileChange} />
+
+<button onClick={openFileDialog}>Upload file</button>
+
+{imageUrl && <img src={imageUrl} />}
 
 <label htmlFor="description">Short Description</label>
 <textarea
@@ -175,9 +174,10 @@ export default () => {
         <div className="error">Error: {status.info.msg}</div>
       )}
       {!status.info.error && status.info.msg && (
+        
         <div className="success">{status.info.msg}</div>
       )}
-      
+
     </main>
   )
 }
